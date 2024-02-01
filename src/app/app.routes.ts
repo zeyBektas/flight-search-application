@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { FlightsComponent } from './flights/flights.component';
+import { FlightsComponent } from './search/flights/flights.component';
 import { SearchComponent } from './search/search.component';
 
 export const routes: Routes = [
