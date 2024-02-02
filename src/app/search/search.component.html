@@ -3,38 +3,39 @@
   <div class="locations">
     <form class="location_form">
       <mat-form-field class="mx-2">
-        <mat-label>Location</mat-label>
+        <mat-label>From</mat-label>
         <input
           type="text"
           placeholder="Pick one"
           aria-label="Location"
           matInput
           [formControl]="departure"
-          [matAutocomplete]="auto"
+          [matAutocomplete]="autoFrom"
         />
-        <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
-          @for (option of filteredOptions | async; track option) {
-          <mat-option [value]="option">{{ option }}</mat-option>
-          }
+        <mat-autocomplete autoActiveFirstOption #autoFrom="matAutocomplete">
+          <mat-option *ngFor="let departureOption of filteredOptions1 | async" [value]="departureOption">
+            {{ departureOption }}
+          </mat-option>
         </mat-autocomplete>
       </mat-form-field>
-
+      
       <mat-form-field class="mx-2">
-        <mat-label>Location</mat-label>
+        <mat-label>To</mat-label>
         <input
           type="text"
           placeholder="Pick one"
           aria-label="Location"
           matInput
           [formControl]="landing"
-          [matAutocomplete]="auto"
+          [matAutocomplete]="autoTo"
         />
-        <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
-          @for (option of filteredOptions | async; track option) {
-          <mat-option [value]="option">{{ option }}</mat-option>
-          }
+        <mat-autocomplete autoActiveFirstOption #autoTo="matAutocomplete">
+          <mat-option *ngFor="let landingOption of filteredOptions2 | async" [value]="landingOption">
+            {{ landingOption }}
+          </mat-option>
         </mat-autocomplete>
       </mat-form-field>
+      
     </form>
 
     <mat-checkbox class="checkbox" [(ngModel)]="isOneWay">One Way</mat-checkbox>
