@@ -7,14 +7,13 @@ import { MatSelectModule } from '@angular/material/select';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
-import { AsyncPipe, CommonModule  } from '@angular/common';
+import { AsyncPipe, CommonModule } from '@angular/common';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { Router } from '@angular/router';
 import { Firestore, collectionData } from '@angular/fire/firestore';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection } from 'firebase/firestore';
 import { FlightDataService } from '../services/flight-data.service';
-
 
 @Component({
   selector: 'app-search',
@@ -32,7 +31,7 @@ import { FlightDataService } from '../services/flight-data.service';
     AsyncPipe,
     MatCheckboxModule,
     FormsModule,
-    CommonModule
+    CommonModule,
   ],
 })
 export class SearchComponent implements OnInit {
@@ -45,8 +44,12 @@ export class SearchComponent implements OnInit {
   todayDate = new Date();
   departureDate = new Date();
   returnDate: any;
+  showErrorMessage: boolean = false;
 
-  constructor(private router: Router, private flightDataService: FlightDataService) {}
+  constructor(
+    private router: Router,
+    private flightDataService: FlightDataService
+  ) {}
 
   firestore = inject(Firestore);
 
@@ -68,11 +71,18 @@ export class SearchComponent implements OnInit {
       landing: this.landing.value,
       departureDate: this.formatDate(this.departureDate),
       returnDate: this.formatDate(this.returnDate),
-      isOneWay: this.isOneWay
-    }
-    this.formatDate(this.departureDate);
-    this.flightDataService.updateSearchData(searchData);
-    this.router.navigateByUrl('flights');
+      isOneWay: this.isOneWay,
+    };
+    if (
+      searchData.departure &&
+      searchData.landing &&
+      searchData.departureDate
+    ) {
+      if (this.isOneWay || searchData.returnDate) {
+        this.flightDataService.updateSearchData(searchData);
+        this.router.navigateByUrl('flights');
+      } else this.showErrorMessage = true;
+    } else this.showErrorMessage = true;
   }
 
   getAirports() {
@@ -80,10 +90,10 @@ export class SearchComponent implements OnInit {
       return;
     }
 
-    const airportsCollection = collection(this.firestore, "airports");
+    const airportsCollection = collection(this.firestore, 'airports');
     collectionData(airportsCollection).subscribe((res) => {
-      res.forEach((element:any) => {
-        const option = element.city + " (" + element.airportCode + ")";
+      res.forEach((element: any) => {
+        const option = element.city + ' (' + element.airportCode + ')';
         this.options.push(option);
       });
 
@@ -96,7 +106,7 @@ export class SearchComponent implements OnInit {
         startWith(''),
         map((value) => this._filter(value || ''))
       );
-    })
+    });
   }
 
   formatToTwoDigits(num: number) {
@@ -119,7 +129,6 @@ export class SearchComponent implements OnInit {
       this.formatToTwoDigits(date.getMonth() + 1) +
       '-' +
       this.formatToTwoDigits(date.getDate());
-      return time;
+    return time;
   }
-
 }

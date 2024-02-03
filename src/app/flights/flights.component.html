@@ -1,16 +1,74 @@
-<div class="container-sm my-5 mx-5">
-    <h1>FLIGHTS</h1>
-    <div class="box d-flex justify-content-space-between" *ngFor="let flight of flights">
-        <div>{{ flight.flightId }}</div>
-        <div>{{ flight.departure }}</div>
-        <div>{{ flight.landing }}</div>
-        <div>{{ flight.duration }}</div>
-        <div>{{ flight.price }}</div>
-        <div>{{ flight.time }}</div>
+<div class="main px-5 py-5 ">
+  <div class="container-md my-5 mx-5">
+    <h1 class="my-3">FLIGHTS</h1>
+    <div class="d-flex justify-content-end">
+      <mat-form-field>
+        <mat-label for="sortBy">Sort By:</mat-label>
+        <mat-select
+          id="sortBy"
+          [(ngModel)]="selectedSortBy"
+          (ngModelChange)="sortFlights()"
+        >
+          <mat-option *ngFor="let sortOption of sortBy" [value]="sortOption">{{
+            sortOption
+          }}</mat-option>
+        </mat-select>
+      </mat-form-field>
     </div>
-</div>
-<div class="text-center spinner" *ngIf="loading">
-  <div class="spinner-border" role="status">
-    <span class="visually-hidden">Loading...</span>
+
+    <div class="flights" *ngIf="!loading && !noFlights">
+      <div class="d-flex justify-content-between px-3">
+        <div style="width: 20%;">From:</div>
+        <div style="width: 10%">></div>
+        <div style="width: 20%;">To:</div>
+        <div style="width: 10%">Duration</div>
+        <div style="width: 10%">Price</div>
+        <div style="width: 10%">Time</div>
+        <div style="width: 15%">Airline</div>
+      </div>
+      
+      <div
+        class="flight-box px-5 py-5 my-3 border rounded"
+        *ngFor="let flight of flights"
+      >
+        <div style="width: 20%;">{{ flight.departure }}</div>
+        <div style="width: 10%">></div>
+        <div style="width: 20%;">{{ flight.landing }}</div>
+        <div style="width: 10%">{{ flight.duration }}m</div>
+        <div style="width: 10%">{{ flight.price | currency }}</div>
+        <div style="width: 10%" class="time">{{ flight.time }}</div>
+        <div style="width: 15%">{{ flight.airline }}</div>
+      </div>
+    </div>
+    
+    <div class="no-flights-message px-5 py-5" *ngIf="!loading && noFlights">
+      There are no flights from {{ info.departure }} to {{ info.landing }} in selected date.
+    </div>
+
+    <div class="flights" *ngIf="!loading && !noReturnFlights && !info.isOneWay">
+      <h2 class="my-5">Return Flights</h2>
+      <div
+        class="flight-box px-5 py-5 my-3 border rounded"
+        *ngFor="let flight of returnFlights"
+      >
+        <div style="width: 20%;">{{ flight.departure }}</div>
+        <div style="width: 10%">></div>
+        <div style="width: 20%;">{{ flight.landing }}</div>
+        <div style="width: 10%">{{ flight.duration }}m</div>
+        <div style="width: 10%">{{ flight.price | currency }}</div>
+        <div style="width: 10%" class="time">{{ flight.time }}</div>
+        <div style="width: 15%">{{ flight.airline }}</div>
+      </div>
+    </div>
+
+    <div class="no-flights-message px-5 py-5" *ngIf="!loading && !info.isOneWay && noReturnFlights">
+      There are no flights from {{ info.landing }} to {{ info.departure }} in selected date.
+    </div>
+
+    <div class="text-center spinner" *ngIf="loading">
+      <div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
   </div>
 </div>
